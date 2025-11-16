@@ -60,23 +60,32 @@ class QuizApp {
         // Populate voice dropdown
         this.populateVoiceDropdown(voices);
 
-        // Prefer Indian English female voices with neutral accents
+        // Prefer neural/premium voices for natural, conversational sound
+        // Neural voices sound much more natural than standard TTS voices
         const preferredVoices = [
-            // Google Indian voices
-            'Google हिन्दी',
+            // Google Neural voices (most natural)
+            voices.find(v => v.name.includes('Neural') && v.lang.startsWith('en')),
+            voices.find(v => v.name.includes('neural') && v.lang.startsWith('en')),
+            // Google premium voices
             'Google UK English Female',
             'Google US English Female',
-            // Microsoft voices
-            'Microsoft Heera - English (India)',
+            'Google Australian English Female',
+            // Microsoft Neural voices
+            voices.find(v => v.name.includes('Neural') && v.lang.startsWith('en')),
             'Microsoft Zira - English (United States)',
-            // Apple voices
+            'Microsoft Heera - English (India)',
+            'Microsoft Aria - English (United States)',
+            // Apple premium voices (natural sounding)
             'Samantha',
             'Karen',
             'Veena',
+            'Alex',
             // Any Indian English voice
             voices.find(v => v.lang.includes('en-IN')),
-            // Any female English voice
+            // Any female English voice (often more natural)
             voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female')),
+            // Any premium/premium voice
+            voices.find(v => v.lang.startsWith('en') && (v.name.toLowerCase().includes('premium') || v.name.toLowerCase().includes('enhanced'))),
             // Fallback to any English voice
             voices.find(v => v.lang.startsWith('en'))
         ];
@@ -236,9 +245,10 @@ class QuizApp {
             this.currentUtterance.voice = this.selectedVoice;
         }
 
-        // Configure speech parameters
+        // Configure speech parameters for natural, conversational sound
         this.currentUtterance.rate = this.voiceSpeed;
-        this.currentUtterance.pitch = 1.0;
+        // Pitch between 1.1-1.15 sounds more natural and conversational (1.0 sounds robotic)
+        this.currentUtterance.pitch = 1.12;
         this.currentUtterance.volume = 1.0;
 
         // Update UI when speaking starts

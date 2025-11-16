@@ -185,6 +185,12 @@ class MultiplayerQuizApp {
                     this.updateScoreDisplay(data.scores);
                     break;
 
+                case 'quiz-load':
+                    if (this.role !== 'controller') {
+                        this.loadQuizFromFile(data.quizFile);
+                    }
+                    break;
+
                 case 'next-question':
                     if (this.role !== 'controller') {
                         this.currentCardIndex = data.index;
@@ -258,23 +264,32 @@ class MultiplayerQuizApp {
         // Populate voice dropdown
         this.populateVoiceDropdown(voices);
 
-        // Prefer Indian English female voices with neutral accents
+        // Prefer neural/premium voices for natural, conversational sound
+        // Neural voices sound much more natural than standard TTS voices
         const preferredVoices = [
-            // Google Indian voices
-            'Google हिन्दी',
+            // Google Neural voices (most natural)
+            voices.find(v => v.name.includes('Neural') && v.lang.startsWith('en')),
+            voices.find(v => v.name.includes('neural') && v.lang.startsWith('en')),
+            // Google premium voices
             'Google UK English Female',
             'Google US English Female',
-            // Microsoft voices
-            'Microsoft Heera - English (India)',
+            'Google Australian English Female',
+            // Microsoft Neural voices
+            voices.find(v => v.name.includes('Neural') && v.lang.startsWith('en')),
             'Microsoft Zira - English (United States)',
-            // Apple voices
+            'Microsoft Heera - English (India)',
+            'Microsoft Aria - English (United States)',
+            // Apple premium voices (natural sounding)
             'Samantha',
             'Karen',
             'Veena',
+            'Alex',
             // Any Indian English voice
             voices.find(v => v.lang.includes('en-IN')),
-            // Any female English voice
+            // Any female English voice (often more natural)
             voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female')),
+            // Any premium/premium voice
+            voices.find(v => v.lang.startsWith('en') && (v.name.toLowerCase().includes('premium') || v.name.toLowerCase().includes('enhanced'))),
             // Fallback to any English voice
             voices.find(v => v.lang.startsWith('en'))
         ];
@@ -429,6 +444,34 @@ class MultiplayerQuizApp {
         }
     }
 
+    async loadQuizFromFile(quizFile) {
+        try {
+            const response = await fetch(quizFile);
+            if (!response.ok) {
+                throw new Error(`Failed to load quiz: ${response.statusText}`);
+            }
+            this.currentQuiz = await response.json();
+            this.prepareCards();
+            this.currentCardIndex = 0;
+            this.displayCard();
+            this.updateStats();
+            
+            // Broadcast quiz load to all players
+            if (this.role === 'controller') {
+                this.broadcast({
+                    type: 'quiz-load',
+                    quizFile: quiz.file
+                });
+                this.broadcast({
+                    type: 'next-question',
+                    index: this.currentCardIndex
+                });
+            }
+        } catch (error) {
+            console.error('Error loading quiz from file:', error);
+        }
+    }
+
     async loadQuiz() {
         const quizSelect = document.getElementById('quiz-select');
         const selectedIndex = quizSelect.value;
@@ -447,6 +490,18 @@ class MultiplayerQuizApp {
             this.currentCardIndex = 0;
             this.displayCard();
             this.updateStats();
+            
+            // Broadcast quiz load to all players
+            if (this.role === 'controller') {
+                this.broadcast({
+                    type: 'quiz-load',
+                    quizFile: quiz.file
+                });
+                this.broadcast({
+                    type: 'next-question',
+                    index: this.currentCardIndex
+                });
+            }
         } catch (error) {
             console.error('Error loading quiz:', error);
         }
@@ -541,6 +596,18 @@ class MultiplayerQuizApp {
 
         this.updateProgress();
         this.updateStats();
+            
+            // Broadcast quiz load to all players
+            if (this.role === 'controller') {
+                this.broadcast({
+                    type: 'quiz-load',
+                    quizFile: quiz.file
+                });
+                this.broadcast({
+                    type: 'next-question',
+                    index: this.currentCardIndex
+                });
+            }
 
         // Auto-read if enabled and controller
         if (this.autoRead && this.role === 'controller') {
@@ -802,7 +869,7 @@ class MultiplayerQuizApp {
         }
 
         this.currentUtterance.rate = this.voiceSpeed;
-        this.currentUtterance.pitch = 1.0;
+        this.currentUtterance.pitch = 1.12; // More natural, conversational pitch (1.0 sounds robotic)
         this.currentUtterance.volume = 1.0;
 
         this.currentUtterance.onstart = () => {

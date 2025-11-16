@@ -2,6 +2,32 @@
 
 This feature allows you to create quiz sets by uploading Excel files (.xlsx or .xls) with questions and answers.
 
+## Automatic Save (Production)
+
+When properly configured with a GitHub token, the upload feature will **automatically**:
+- Save the quiz JSON file to `public/data/quizzes/`
+- Update `public/data/quiz-index.json` with the new quiz entry
+- Create a commit to the repository
+- Make the quiz immediately available in your app (after Vercel redeploys)
+
+**No manual steps needed!** Just upload your Excel file and it's done.
+
+### Setup for Automatic Save
+
+To enable automatic save in production, add these environment variables in Vercel:
+
+1. `GITHUB_TOKEN` - A GitHub Personal Access Token with repo access
+2. `GITHUB_OWNER` - Your GitHub username (optional, auto-detected from Vercel)
+3. `GITHUB_REPO` - Your repository name (optional, auto-detected from Vercel)
+4. `GITHUB_BRANCH` - Target branch (optional, defaults to 'main')
+
+**Creating a GitHub Token:**
+1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. Generate new token with `repo` scope
+3. Copy the token and add it to Vercel environment variables
+
+Without these environment variables, the feature falls back to manual mode (download JSON manually).
+
 ## How to Use
 
 ### 1. Access the Admin Page
@@ -46,7 +72,9 @@ You can then:
 
 ### 5. Deploy the Quiz
 
-To make the quiz available in your app:
+**If automatic save is enabled:** The quiz is immediately available after Vercel redeploys (usually 1-2 minutes). No action needed!
+
+**If automatic save is NOT enabled (manual mode):** To make the quiz available in your app:
 
 1. Save the downloaded JSON file to `public/data/quizzes/` directory
 2. Update `public/data/quiz-index.json` to include your new quiz:
@@ -114,9 +142,15 @@ The upload is handled by the `/api/upload-quiz` serverless function.
 {
   "success": true,
   "quiz": { /* quiz JSON object */ },
-  "message": "Quiz parsed successfully"
+  "saved": true,
+  "quizPath": "public/data/quizzes/quiz-name.json",
+  "message": "Quiz saved to repository successfully"
 }
 ```
+
+- `saved`: Boolean indicating if the quiz was automatically saved to the repository
+- `quizPath`: File path where the quiz was saved (only if `saved` is true)
+- `message`: Success message (varies based on whether auto-save is enabled)
 
 ## Security Considerations
 
@@ -129,6 +163,9 @@ The xlsx library has known vulnerabilities (prototype pollution and ReDoS) that 
 - Do not allow untrusted users to upload files
 - Consider adding authentication/authorization if deploying publicly
 - Regularly update dependencies
+- **Keep your GitHub token secure** - never commit it to your repository
+- Use environment variables in Vercel to store the GitHub token
+- The GitHub token should have minimal permissions (only `repo` scope for your quiz repository)
 
 ## Example Excel Template
 

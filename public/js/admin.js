@@ -113,7 +113,7 @@ class QuizUploader {
 
             // Show success
             this.quizData = data.quiz;
-            this.showSuccess(data.quiz);
+            this.showSuccess(data);
 
         } catch (error) {
             console.error('Upload error:', error);
@@ -125,7 +125,10 @@ class QuizUploader {
         }
     }
 
-    showSuccess(quizData) {
+    showSuccess(data) {
+        const quizData = data.quiz;
+        const saved = data.saved || false;
+
         // Hide form and error
         this.form.closest('.card').style.display = 'none';
         this.errorSection.style.display = 'none';
@@ -144,6 +147,31 @@ class QuizUploader {
         }, 0);
 
         document.getElementById('resultCount').textContent = totalQuestions;
+
+        // Update success message based on whether it was saved
+        const successMessage = document.querySelector('.success-message');
+        if (saved) {
+            successMessage.innerHTML = `
+                <strong>✓ Automatically saved!</strong><br>
+                Your quiz has been saved to the repository and the quiz index has been updated.
+                The quiz is now available in the app.
+            `;
+            successMessage.style.color = 'var(--success)';
+
+            // Hide download/copy buttons if saved
+            document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'none';
+        } else {
+            successMessage.innerHTML = `
+                Your Excel file has been converted to quiz format.<br>
+                <small style="color: var(--text-secondary);">Download the JSON file and add it to your repository manually.</small>
+            `;
+            successMessage.style.color = 'var(--text-primary)';
+
+            // Show download/copy buttons
+            document.getElementById('downloadBtn').style.display = 'inline-flex';
+            document.getElementById('copyBtn').style.display = 'inline-flex';
+        }
 
         // Show JSON preview
         document.getElementById('jsonOutput').textContent = JSON.stringify(quizData, null, 2);

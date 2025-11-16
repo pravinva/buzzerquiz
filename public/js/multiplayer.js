@@ -422,7 +422,13 @@ class MultiplayerQuizApp {
         const acceptAnswers = document.querySelector('.accept-answers');
         if (acceptAnswers) {
             if (card.accept && card.accept.length > 0) {
-                acceptAnswers.innerHTML = `<strong>Also Accept:</strong><p>${card.accept.join(', ')}</p>`;
+                const chipsHTML = card.accept.map(ans =>
+                    `<span class="accept-answer-chip">${ans}</span>`
+                ).join('');
+                acceptAnswers.innerHTML = `
+                    <strong>Also Accept:</strong>
+                    <div class="accept-answers-list">${chipsHTML}</div>
+                `;
             } else {
                 acceptAnswers.innerHTML = '';
             }

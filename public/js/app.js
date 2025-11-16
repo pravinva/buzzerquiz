@@ -272,9 +272,12 @@ class QuizApp {
         // Update accept answers
         const acceptAnswers = document.querySelector('.accept-answers');
         if (card.accept && card.accept.length > 0) {
+            const chipsHTML = card.accept.map(ans =>
+                `<span class="accept-answer-chip">${ans}</span>`
+            ).join('');
             acceptAnswers.innerHTML = `
                 <strong>Also Accept:</strong>
-                <p>${card.accept.join(', ')}</p>
+                <div class="accept-answers-list">${chipsHTML}</div>
             `;
         } else {
             acceptAnswers.innerHTML = '';

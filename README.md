@@ -1,9 +1,10 @@
 # ICC Quiz Cards
 
-An interactive flashcard application for ICC quiz questions. Features beautiful card animations, text-to-speech, and one-by-one question presentation.
+An interactive flashcard application for ICC quiz questions. Features beautiful card animations, text-to-speech, multiplayer buzz-in mode, and Progressive Web App support for mobile devices.
 
 ## Features
 
+### Solo Mode
 - **Interactive Flashcards**: Click to flip cards and reveal answers
 - **Streaming Text Animation**: Questions appear word-by-word at natural reading speed
 - **Text-to-Speech**: Voice reading with neutral English male voice
@@ -11,31 +12,49 @@ An interactive flashcard application for ICC quiz questions. Features beautiful 
 - **Smooth Animations**: Beautiful hover effects and transitions
 - **Progress Tracking**: Visual progress bar and statistics
 - **Keyboard Navigation**: Arrow keys to navigate, Space/Enter to flip, R to read
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
+
+### Multiplayer Buzz Mode 🎮
+- **4-Player Support**: Up to 4 players can compete simultaneously
+- **Controller Role**: 5th player manages the quiz and judges answers
+- **Buzz-In System**: Players buzz to answer, stopping question stream
+- **Live Scoreboard**: Real-time score tracking with +1, 0, -1 scoring
+- **Auto-Progression**: Automatically moves to next question after scoring
+- **Role-Based Access**: Only controller can flip cards and reveal answers
+
+### Progressive Web App
+- **Install on Mobile**: Add to home screen on iOS and Android
+- **Offline Support**: Works without internet after first visit
+- **Native Feel**: Full-screen mode with no browser UI
+- **Responsive Design**: Optimized for all screen sizes
 
 ## Project Structure
 
 ```
 icc-quiz-cards/
-├── public/                 # Web application
-│   ├── index.html         # Main HTML file
+├── public/                      # Web application
+│   ├── index.html              # Solo mode
+│   ├── multiplayer.html        # Multiplayer buzz mode
+│   ├── manifest.json           # PWA manifest
+│   ├── sw.js                   # Service worker
 │   ├── css/
-│   │   └── styles.css     # Styles and animations
+│   │   ├── styles.css          # Solo mode styles
+│   │   └── multiplayer.css     # Multiplayer styles
 │   └── js/
-│       └── app.js         # Application logic
+│       ├── app.js              # Solo mode logic
+│       └── multiplayer.js      # Multiplayer logic
 ├── data/
-│   ├── quizzes/           # JSON quiz files
+│   ├── quizzes/                # JSON quiz files
 │   │   └── sample_quiz.json
-│   └── quiz-index.json    # Index of available quizzes
-├── scripts/               # PDF processing scripts
-│   ├── extract_pdf.py     # Single PDF converter
-│   ├── parse_quiz.py      # Text parser
-│   └── batch_convert.py   # Batch PDF converter
+│   └── quiz-index.json         # Index of available quizzes
+├── scripts/                    # PDF processing scripts
+│   ├── extract_pdf.py          # Single PDF converter
+│   ├── parse_quiz.py           # Text parser
+│   └── batch_convert.py        # Batch PDF converter
 ├── docs/
-│   └── schema.json        # Quiz data schema
-├── vercel.json            # Vercel deployment config
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
+│   └── schema.json             # Quiz data schema
+├── vercel.json                 # Vercel deployment config
+├── requirements.txt            # Python dependencies
+└── README.md                  # This file
 ```
 
 ## Quick Start
@@ -168,7 +187,7 @@ Quizzes are stored in JSON format following this structure:
 
 See `docs/schema.json` for the complete JSON schema.
 
-### Using the Flashcard App
+### Using the Flashcard App (Solo Mode)
 
 1. **Select a Quiz**: Choose from the dropdown menu
 2. **Read the Question**: Watch words stream in naturally
@@ -182,6 +201,86 @@ See `docs/schema.json` for the complete JSON schema.
 - **←/→**: Previous/Next question
 - **Space/Enter**: Flip card
 - **R**: Read question aloud
+
+### Using Multiplayer Buzz Mode
+
+Access multiplayer mode at `/multiplayer.html`
+
+#### Setting Up a Game
+
+1. **Controller** starts first and shares the room code with players
+2. **Players 1-4** join using the same room code
+3. Everyone selects their role (Controller or Player 1-4)
+4. **Controller** selects a quiz to begin
+
+#### How to Play
+
+1. **Question Appears**: Words stream in at natural reading speed
+2. **Players Buzz** (Optional): Click the buzz button when you know the answer
+   - Buzzing stops the question stream and voice
+   - First to buzz gets to answer
+3. **Controller Reveals Answer**: Click/tap the card to flip and show answer
+4. **Controller Judges** (if someone buzzed):
+   - **Correct (+1)**: Award point
+   - **Wrong (−1)**: Deduct point
+   - **Pass (0)**: No points
+5. **Controller Advances**: Press "Next" button to move to next question
+6. **Repeat**: Continue through all questions
+
+#### Multiplayer Features
+
+- **Room Codes**: Share unique room codes to connect players
+- **Real-Time Scoreboard**: Live score updates for all 4 players
+- **Controller-Only Access**: Only controller can flip cards and judge answers
+- **Buzz Indicators**: Shows who buzzed and when
+- **Auto-Progression**: Moves to next question after scoring
+
+#### Local Testing
+
+For same-browser testing, open multiple tabs:
+- Tab 1: Select "Controller"
+- Tab 2-5: Select "Player 1", "Player 2", etc.
+
+All tabs will sync via BroadcastChannel API.
+
+#### Production Deployment
+
+For multi-device support across different locations, integrate a real-time service:
+
+**Option 1: Firebase Realtime Database**
+```javascript
+// Replace BroadcastChannel with Firebase
+import { getDatabase, ref, onValue, set } from 'firebase/database';
+```
+
+**Option 2: Supabase Realtime**
+```javascript
+// Use Supabase for real-time sync
+import { createClient } from '@supabase/supabase-js';
+```
+
+**Option 3: PartyKit (Recommended for Vercel)**
+- Easy integration with Vercel
+- Built for real-time multiplayer
+- Free tier available
+
+See [PartyKit Documentation](https://docs.partykit.io/) for setup instructions.
+
+### Installing as PWA on Mobile
+
+#### iOS (Safari)
+1. Open the app in Safari
+2. Tap the Share button
+3. Select "Add to Home Screen"
+4. Tap "Add"
+
+#### Android (Chrome)
+1. Open the app in Chrome
+2. Tap the menu (⋮)
+3. Select "Add to Home Screen"
+4. Tap "Add"
+
+The app will now appear as an icon on your home screen and run in full-screen mode!
 
 ## Customization
 

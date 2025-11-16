@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="ICC Quiz Cards - Interactive multiplayer quiz flashcards with buzz-in functionality">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ICC Quiz">
+
+    <title>ICC Quiz Cards - Multiplayer Buzz Mode</title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/multiplayer.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+</head>
+<body>
+    <div class="container">
+        <!-- Role Selection Screen -->
+        <div id="role-selection" class="role-selection">
+            <header>
+                <h1>ICC Quiz Cards</h1>
+                <h2>Multiplayer Buzz Mode</h2>
+            </header>
+
+            <div class="role-options">
+                <div class="role-card">
+                    <h3>🎮 Controller</h3>
+                    <p>Run the quiz, reveal answers, manage the game</p>
+                    <button class="role-btn controller-btn" onclick="app.selectRole('controller')">
+                        Join as Controller
+                    </button>
+                </div>
+
+                <div class="role-card">
+                    <h3>🎯 Player</h3>
+                    <p>Buzz in to answer questions</p>
+                    <div class="player-selection">
+                        <button class="role-btn player-btn" onclick="app.selectRole('player1')">Player 1</button>
+                        <button class="role-btn player-btn" onclick="app.selectRole('player2')">Player 2</button>
+                        <button class="role-btn player-btn" onclick="app.selectRole('player3')">Player 3</button>
+                        <button class="role-btn player-btn" onclick="app.selectRole('player4')">Player 4</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-info">
+                <p>Room Code: <strong id="room-code">Loading...</strong></p>
+                <p class="hint">Share this code with other players to join the same room</p>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="game-screen" style="display: none;">
+            <header>
+                <h1>ICC Quiz Cards</h1>
+                <div class="game-header">
+                    <div class="role-badge" id="role-badge">Controller</div>
+                    <div class="quiz-selector">
+                        <label for="quiz-select">Select Quiz:</label>
+                        <select id="quiz-select">
+                            <option value="">Loading quizzes...</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <!-- Buzz Status Bar -->
+                <div class="buzz-status" id="buzz-status">
+                    <div class="buzz-indicator" id="buzz-indicator">
+                        Waiting for buzz...
+                    </div>
+                    <button id="reset-buzz-btn" class="reset-buzz-btn" style="display: none;">
+                        Reset Buzz
+                    </button>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <span class="progress-text" id="progress-text">0 / 0</span>
+                </div>
+
+                <!-- Flashcard -->
+                <div class="card-container" id="card-container">
+                    <div class="flashcard" id="flashcard">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="card-content">
+                                    <div class="question-number"></div>
+                                    <p class="question-text">Select a quiz to begin</p>
+                                </div>
+                                <div class="card-hint controller-only">Click to reveal answer</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-content">
+                                    <h3>Answer:</h3>
+                                    <p class="answer-text"></p>
+                                    <div class="accept-answers"></div>
+                                    <div class="translations"></div>
+                                </div>
+                                <div class="card-hint controller-only">Click to see question</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Buzz Button -->
+                <div class="buzz-button-container" id="buzz-button-container" style="display: none;">
+                    <button id="buzz-btn" class="buzz-btn">
+                        <span class="buzz-icon">🔔</span>
+                        <span class="buzz-text">BUZZ!</span>
+                    </button>
+                </div>
+
+                <!-- Controller Scoring (shown when someone has buzzed) -->
+                <div class="scoring-controls controller-only" id="scoring-controls" style="display: none;">
+                    <h3>Judge Answer</h3>
+                    <div class="scoring-buttons">
+                        <button id="correct-btn" class="score-btn correct-btn">
+                            <span class="score-icon">✓</span>
+                            <span class="score-text">Correct (+1)</span>
+                        </button>
+                        <button id="pass-btn" class="score-btn pass-btn">
+                            <span class="score-icon">−</span>
+                            <span class="score-text">Pass (0)</span>
+                        </button>
+                        <button id="wrong-btn" class="score-btn wrong-btn">
+                            <span class="score-icon">✗</span>
+                            <span class="score-text">Wrong (−1)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controller Controls -->
+                <div class="controls controller-only" id="controller-controls">
+                    <button id="voice-btn" class="voice-btn" title="Read question aloud">
+                        <span class="voice-icon">🔊</span>
+                        <span class="voice-text">Read Aloud</span>
+                    </button>
+                    <label class="auto-read-toggle">
+                        <input type="checkbox" id="auto-read" />
+                        <span>Auto-read questions</span>
+                    </label>
+                </div>
+
+                <!-- Navigation -->
+                <div class="navigation">
+                    <button id="prev-btn" class="nav-btn" disabled>
+                        <span>←</span> Previous
+                    </button>
+                    <button id="next-btn" class="nav-btn" disabled>
+                        Next <span>→</span>
+                    </button>
+                </div>
+
+                <!-- Scoreboard -->
+                <div class="scoreboard">
+                    <h3>Scoreboard</h3>
+                    <div class="score-grid" id="score-grid">
+                        <div class="score-item">
+                            <span class="player-label">Player 1</span>
+                            <span class="player-score" id="score-player1">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="player-label">Player 2</span>
+                            <span class="player-score" id="score-player2">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="player-label">Player 3</span>
+                            <span class="player-score" id="score-player3">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="player-label">Player 4</span>
+                            <span class="player-score" id="score-player4">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Round:</span>
+                        <span id="current-round">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Player:</span>
+                        <span id="current-player">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Cards:</span>
+                        <span id="total-cards">0</span>
+                    </div>
+                </div>
+
+                <!-- Connected Players -->
+                <div class="connected-players">
+                    <h4>Connected Players</h4>
+                    <div id="players-list" class="players-list">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <p>ICC Quiz Cards - Multiplayer Buzz Mode</p>
+                <a href="index.html">← Back to Solo Mode</a>
+            </footer>
+        </div>
+    </div>
+
+    <script src="/js/multiplayer.js"></script>
+    <script>
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered:', registration))
+                    .catch(error => console.log('SW registration failed:', error));
+            });
+        }
+    </script>
+</body>
+</html>

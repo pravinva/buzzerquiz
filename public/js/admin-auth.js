@@ -9,9 +9,8 @@
         // Simple password prompt
         const password = prompt('Enter admin password to access quiz upload:');
 
-        // You can set your password in Vercel environment variable: ADMIN_PASSWORD
-        // For now, using a default (change this!)
-        const correctPassword = 'admin123'; // TODO: Change this password!
+        // Admin password
+        const correctPassword = 'C@sas123';
 
         if (password !== correctPassword) {
             alert('Incorrect password. Access denied.');

@@ -1,15 +1,12 @@
 // Configuration for ICC Quiz Cards
-// Copy this file to config.local.js and add your credentials
-// config.local.js is gitignored for security
+// For production (Vercel): Add your Supabase credentials here
+// For local dev: Create config.local.js (gitignored) which loads first
 
 // Supabase Configuration (Optional - enables multi-device multiplayer)
-// Get free credentials at: https://supabase.com
-// 1. Create a new project at https://app.supabase.com
-// 2. Go to Settings > API
-// 3. Copy URL and anon/public key below
+// The anon key is safe to expose - it's designed for frontend use
+// Supabase protects data with Row Level Security (RLS) policies
 
-window.SUPABASE_URL = ''; // e.g., 'https://xxxxx.supabase.co'
-window.SUPABASE_ANON_KEY = ''; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+window.SUPABASE_URL = window.SUPABASE_URL || 'https://wivhfzszyuiisdmbsakm.supabase.co';
+window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdmhmenN6eXVpaXNkbWJzYWttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyODI1MTUsImV4cCI6MjA3ODg1ODUxNX0.4htTQ_DLBveDib2xEBzO9wz7EctE-HmYuNDxSPAQ0cs';
 
-// If empty, the app will use BroadcastChannel (same-browser only)
-// For production, use environment variables or config.local.js
+// If both are empty, the app will use BroadcastChannel (same-browser only)

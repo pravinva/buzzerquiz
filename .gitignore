@@ -49,6 +49,7 @@ yarn-error.log*
 
 # Local configuration (Supabase credentials)
 public/config.local.js
+public/config.generated.js
 
 # Temporary files
 *.tmp

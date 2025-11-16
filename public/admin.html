@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Upload - ICC Quiz Cards</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Upload</h1>
+            <p class="subtitle">Upload Excel files to create new quiz sets</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="card">
+                    <h2>Upload Excel File</h2>
+                    <p class="info-text">
+                        Upload an Excel file (.xlsx or .xls) with questions in Column A and answers in Column B.
+                        Optional: Add alternative answers in Column C (comma-separated).
+                    </p>
+
+                    <form id="uploadForm" class="upload-form">
+                        <div class="form-group">
+                            <label for="quizTitle">Quiz Title</label>
+                            <input
+                                type="text"
+                                id="quizTitle"
+                                name="title"
+                                placeholder="Enter quiz title (optional)"
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fileInput" class="file-label">
+                                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                                <span id="fileLabel">Choose Excel file or drag & drop</span>
+                            </label>
+                            <input
+                                type="file"
+                                id="fileInput"
+                                name="file"
+                                accept=".xlsx,.xls"
+                                required
+                                class="file-input"
+                            >
+                        </div>
+
+                        <button type="submit" id="uploadBtn" class="btn btn-primary">
+                            <span class="btn-text">Upload and Convert</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div id="resultSection" class="card result-section" style="display: none;">
+                    <h2>Quiz Generated Successfully!</h2>
+                    <p class="success-message">
+                        Your Excel file has been converted to quiz format.
+                    </p>
+
+                    <div class="quiz-info">
+                        <div class="info-item">
+                            <span class="info-label">Title:</span>
+                            <span id="resultTitle" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Questions:</span>
+                            <span id="resultCount" class="info-value"></span>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="downloadBtn" class="btn btn-success">
+                            Download JSON
+                        </button>
+                        <button id="copyBtn" class="btn btn-secondary">
+                            Copy to Clipboard
+                        </button>
+                        <button id="uploadAnotherBtn" class="btn btn-outline">
+                            Upload Another
+                        </button>
+                    </div>
+
+                    <details class="json-preview">
+                        <summary>Preview JSON</summary>
+                        <pre id="jsonOutput" class="json-output"></pre>
+                    </details>
+                </div>
+
+                <div id="errorSection" class="card error-section" style="display: none;">
+                    <h2>Error</h2>
+                    <p id="errorMessage" class="error-message"></p>
+                    <button id="retryBtn" class="btn btn-outline">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+
+            <div class="instructions card">
+                <h3>Excel File Format</h3>
+                <div class="example-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Column A (Question)</th>
+                                <th>Column B (Answer)</th>
+                                <th>Column C (Alternatives - Optional)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>What is the capital of France?</td>
+                                <td>Paris</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>What is 2 + 2?</td>
+                                <td>4</td>
+                                <td>four, Four</td>
+                            </tr>
+                            <tr>
+                                <td>Who wrote Romeo and Juliet?</td>
+                                <td>William Shakespeare</td>
+                                <td>Shakespeare</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul class="instructions-list">
+                    <li>First row can be headers or data (headers will be auto-detected)</li>
+                    <li>Questions go in Column A</li>
+                    <li>Answers go in Column B</li>
+                    <li>Alternative answers (optional) go in Column C, separated by commas</li>
+                    <li>Empty rows will be skipped</li>
+                </ul>
+            </div>
+
+            <div class="actions">
+                <a href="/" class="btn btn-outline">Back to Quiz App</a>
+                <a href="/multiplayer.html" class="btn btn-outline">Multiplayer Mode</a>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

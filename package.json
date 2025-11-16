@@ -1,0 +1,14 @@
+{
+  "name": "icc-quiz-cards",
+  "version": "1.0.0",
+  "description": "ICC Quiz Cards - Interactive flashcard quiz application",
+  "private": true,
+  "dependencies": {
+    "xlsx": "^0.18.5",
+    "formidable": "^3.5.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  }
+}

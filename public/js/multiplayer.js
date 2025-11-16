@@ -30,6 +30,10 @@ class MultiplayerQuizApp {
         this.selectedVoice = null;
         this.voiceSpeed = 1.2;
         this.wordSpeed = 200;
+        this.useAIVoice = false;
+        this.selectedAIVoice = 'en-US-Neural2-F';
+        this.currentAudio = null;
+        this.audioCache = new Map(); // In-memory cache for audio
 
         // Backend communication (BroadcastChannel or Supabase)
         this.backend = null;
@@ -421,6 +425,31 @@ class MultiplayerQuizApp {
                 wordSpeedSlider.addEventListener('input', (e) => {
                     this.wordSpeed = parseInt(e.target.value);
                     wordSpeedValue.textContent = `${this.wordSpeed} wpm`;
+                });
+            }
+
+            // AI voice toggle
+            const useAIVoiceCheckbox = document.getElementById('use-ai-voice');
+            const aiVoiceSelect = document.getElementById('ai-voice-select');
+            const browserVoiceGroup = document.getElementById('browser-voice-group');
+            const aiVoiceGroup = document.getElementById('ai-voice-group');
+
+            if (useAIVoiceCheckbox) {
+                useAIVoiceCheckbox.addEventListener('change', (e) => {
+                    this.useAIVoice = e.target.checked;
+                    if (this.useAIVoice) {
+                        browserVoiceGroup.style.display = 'none';
+                        aiVoiceGroup.style.display = 'flex';
+                    } else {
+                        browserVoiceGroup.style.display = 'flex';
+                        aiVoiceGroup.style.display = 'none';
+                    }
+                });
+            }
+
+            if (aiVoiceSelect) {
+                aiVoiceSelect.addEventListener('change', (e) => {
+                    this.selectedAIVoice = e.target.value;
                 });
             }
         } else {
@@ -856,12 +885,119 @@ class MultiplayerQuizApp {
         }
     }
 
-    speak(text) {
+    async speakWithAI(text) {
+        // Stop any ongoing speech
         this.stopSpeaking();
 
-        // Normalize text before speaking
+        // Normalize text
         text = this.normalizeText(text);
 
+        // Create cache key
+        const cacheKey = `${this.selectedAIVoice}-${this.voiceSpeed}-${text}`;
+
+        // Check cache first
+        if (this.audioCache.has(cacheKey)) {
+            this.playAudioFromCache(cacheKey);
+            return;
+        }
+
+        // Update UI
+        const voiceBtn = document.getElementById('voice-btn');
+        if (voiceBtn) voiceBtn.classList.add('speaking');
+
+        try {
+            // Call serverless function
+            const response = await fetch('/api/text-to-speech', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text,
+                    voiceName: this.selectedAIVoice,
+                    languageCode: this.selectedAIVoice.substring(0, 5),
+                    speed: this.voiceSpeed,
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error('TTS API error:', error);
+                alert(error.error || 'Failed to generate AI voice. Please check console.');
+                if (voiceBtn) voiceBtn.classList.remove('speaking');
+                return;
+            }
+
+            const data = await response.json();
+
+            // Convert base64 to audio
+            const audioBlob = this.base64ToBlob(data.audioContent, 'audio/mp3');
+            const audioUrl = URL.createObjectURL(audioBlob);
+
+            // Cache the audio
+            this.audioCache.set(cacheKey, audioUrl);
+
+            // Play audio
+            this.currentAudio = new Audio(audioUrl);
+            this.currentAudio.playbackRate = 1.0;
+
+            this.currentAudio.onended = () => {
+                if (voiceBtn) voiceBtn.classList.remove('speaking');
+                this.currentAudio = null;
+            };
+
+            this.currentAudio.onerror = (e) => {
+                console.error('Audio playback error:', e);
+                if (voiceBtn) voiceBtn.classList.remove('speaking');
+                this.currentAudio = null;
+            };
+
+            await this.currentAudio.play();
+
+        } catch (error) {
+            console.error('Error generating AI speech:', error);
+            alert('Failed to generate AI voice. Falling back to browser voice.');
+            if (voiceBtn) voiceBtn.classList.remove('speaking');
+            this.speakWithBrowser(text);
+        }
+    }
+
+    playAudioFromCache(cacheKey) {
+        const audioUrl = this.audioCache.get(cacheKey);
+        const voiceBtn = document.getElementById('voice-btn');
+
+        if (voiceBtn) voiceBtn.classList.add('speaking');
+
+        this.currentAudio = new Audio(audioUrl);
+        this.currentAudio.playbackRate = 1.0;
+
+        this.currentAudio.onended = () => {
+            if (voiceBtn) voiceBtn.classList.remove('speaking');
+            this.currentAudio = null;
+        };
+
+        this.currentAudio.onerror = (e) => {
+            console.error('Cached audio playback error:', e);
+            if (voiceBtn) voiceBtn.classList.remove('speaking');
+            this.currentAudio = null;
+        };
+
+        this.currentAudio.play();
+    }
+
+    base64ToBlob(base64, mimeType) {
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        return new Blob([byteArray], { type: mimeType });
+    }
+
+    speakWithBrowser(text) {
         this.currentUtterance = new SpeechSynthesisUtterance(text);
 
         if (this.selectedVoice) {
@@ -893,17 +1029,39 @@ class MultiplayerQuizApp {
         this.synthesis.speak(this.currentUtterance);
     }
 
+    speak(text) {
+        this.stopSpeaking();
+
+        // Normalize text before speaking
+        text = this.normalizeText(text);
+
+        // Use AI voice or browser voice
+        if (this.useAIVoice) {
+            this.speakWithAI(text);
+        } else {
+            this.speakWithBrowser(text);
+        }
+    }
+
     stopSpeaking() {
+        // Stop browser TTS
         if (this.synthesis.speaking) {
             this.synthesis.cancel();
         }
         const voiceBtn = document.getElementById('voice-btn');
         if (voiceBtn) voiceBtn.classList.remove('speaking');
         this.currentUtterance = null;
+
+        // Stop AI audio
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+            this.currentAudio = null;
+        }
     }
 
     toggleSpeak() {
-        if (this.synthesis.speaking) {
+        if (this.synthesis.speaking || this.currentAudio) {
             this.stopSpeaking();
         } else {
             const card = this.allCards[this.currentCardIndex];

@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ICC Quiz Cards Schema",
+  "description": "Schema for quiz questions and flashcards",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Name of the quiz set"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source PDF or document name"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of quiz creation"
+        },
+        "rounds": {
+          "type": "integer",
+          "description": "Number of rounds in the quiz"
+        }
+      },
+      "required": ["title"]
+    },
+    "rounds": {
+      "type": "array",
+      "description": "Array of quiz rounds",
+      "items": {
+        "type": "object",
+        "properties": {
+          "round_number": {
+            "type": "integer",
+            "description": "Round number (1, 2, 3, etc.)"
+          },
+          "round_name": {
+            "type": "string",
+            "description": "Optional round name or theme"
+          },
+          "players": {
+            "type": "array",
+            "description": "Questions organized by player",
+            "items": {
+              "type": "object",
+              "properties": {
+                "player_number": {
+                  "type": "integer",
+                  "description": "Player number (1, 2, 3, 4)"
+                },
+                "questions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "question_number": {
+                        "type": "integer",
+                        "description": "Question number within this player's turn"
+                      },
+                      "question_text": {
+                        "type": "string",
+                        "description": "The full question text"
+                      },
+                      "answer": {
+                        "type": "string",
+                        "description": "The correct answer"
+                      },
+                      "translations": {
+                        "type": "object",
+                        "description": "Translations of the answer in various languages",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "accept": {
+                        "type": "array",
+                        "description": "Alternative acceptable answers",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "category": {
+                        "type": "string",
+                        "description": "Question category (geography, history, etc.)"
+                      },
+                      "difficulty": {
+                        "type": "string",
+                        "enum": ["easy", "medium", "hard"],
+                        "description": "Difficulty level"
+                      }
+                    },
+                    "required": ["question_number", "question_text", "answer"]
+                  }
+                }
+              },
+              "required": ["player_number", "questions"]
+            }
+          }
+        },
+        "required": ["round_number", "players"]
+      }
+    }
+  },
+  "required": ["metadata", "rounds"]
+}

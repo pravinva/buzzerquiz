@@ -1,0 +1,9 @@
+{
+  "quizzes": [
+    {
+      "name": "Sample Quiz - ICC Quiz Example",
+      "file": "/data/quizzes/sample_quiz.json",
+      "description": "Sample quiz demonstrating the format"
+    }
+  ]
+}

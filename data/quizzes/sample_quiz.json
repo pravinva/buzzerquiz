@@ -1,0 +1,216 @@
+{
+  "metadata": {
+    "title": "ICC Quiz Sample",
+    "source": "Facebook Page Quiz PDF",
+    "date": "2025-11-16",
+    "rounds": 2
+  },
+  "rounds": [
+    {
+      "round_number": 1,
+      "round_name": "Round 1",
+      "players": [
+        {
+          "player_number": 1,
+          "questions": [
+            {
+              "question_number": 1,
+              "question_text": "In 1961, which Central Asian city was named Tselinograd, from the Russian for 'city of virgin lands'? In 1991, when Kazakhstan declared independence, this city's name was changed to Akmola, and it has also been named Nur-Sultan after President Nursultan Nazarbayev.",
+              "answer": "Astana",
+              "translations": {
+                "mandarin": "Āsītǎnà"
+              },
+              "category": "Geography"
+            },
+            {
+              "question_number": 2,
+              "question_text": "The Chinese emperor Kangxi gives his name to the authoritative Chinese dictionary, and his reign also saw the end of the Tungning dynasty's control over Taiwan. That dynasty had been founded by which Southern Ming general who had seized control of the island from the Dutch shortly before his death in 1662?",
+              "answer": "Koxinga",
+              "accept": [
+                "Zhèng Chénggōng",
+                "Zheng Sēn",
+                "Míngyǎn",
+                "Dàmù"
+              ],
+              "category": "History"
+            },
+            {
+              "question_number": 3,
+              "question_text": "Tanzimat was a period of legal, military, tax and social reforms in which major empire in the 19th century? They were built upon the reforms of Sultan Mahmud II, whose reign had seen the disbandment of the janissary corps and the Greek War of Independence.",
+              "answer": "Ottoman Empire",
+              "translations": {
+                "danish": "Det Osmanniske Rige, Osmannerriget",
+                "dutch": "Ottomaanse Rijk, Osmaanse Rijk",
+                "french": "Empire ottoman",
+                "german": "Osmanisches Reich, Ottomanisches Reich",
+                "norwegian": "Det osmanske rike, Det ottomanske rike",
+                "polish": "Imperium Osmańskie",
+                "romanian": "Imperiul Otoman",
+                "swedish": "Osmanska riket, Ottomanska riket",
+                "mandarin": "Ètúmàn dìguó"
+              },
+              "category": "History"
+            }
+          ]
+        },
+        {
+          "player_number": 2,
+          "questions": [
+            {
+              "question_number": 1,
+              "question_text": "The Pacific Plate and its surrounding tectonic plates, such as the Nazca and Australian plates, comprise the largest active zone of which geological plate tectonic process that occurs at convergent boundaries? Within this region, this led to the formation of the \"Ring of Fire\".",
+              "answer": "subduction",
+              "accept": [
+                "subduction zone"
+              ],
+              "translations": {
+                "danish": "subduktion",
+                "dutch": "subductie",
+                "german": "Subduktion",
+                "mandarin": "yǐnmò zuòyòng",
+                "norwegian": "subduksjon",
+                "polish": "subdukcja",
+                "romanian": "subducție",
+                "swedish": "subduktion"
+              },
+              "category": "Science"
+            },
+            {
+              "question_number": 2,
+              "question_text": "There are two books of the Bible that are considered canonical but have Greek additions that are considered apocryphal by Protestants. They are the Book of Daniel and which other book that is set in Persia during the reign of Ahasuerus and involves the plot of Haman to kill the Jews? This book's title character is the subject of a play by Jean Racine and poetry by Lucrezia Tornabuoni and Christina Rosetti.",
+              "answer": "Book of Esther",
+              "translations": {
+                "danish": "Esters Bog",
+                "dutch": "Ester",
+                "french": "Livre d'Esther",
+                "norwegian": "Esters bok",
+                "polish": "Księga Estery, Estera",
+                "romanian": "Estera",
+                "german": "Buch Ester",
+                "swedish": "Esters bok",
+                "mandarin": "Yǐsītiē jì, Àisīdé'ěr chuán"
+              },
+              "category": "Religion"
+            },
+            {
+              "question_number": 3,
+              "question_text": "Which French novelist produced around 4,000 pen-and-ink drawings – many of which depicted imagined landscapes, castles and monsters – which were described as \"astonishing things\" by Vincent Van Gogh and inspired the Symbolist poets? He is better known as the author of Notre-Dame de Paris (The Hunchback of Notre-Dame).",
+              "answer": "Victor Hugo",
+              "translations": {
+                "mandarin": "Wéikèduō·Yǔguǒ"
+              },
+              "category": "Literature"
+            }
+          ]
+        },
+        {
+          "player_number": 3,
+          "questions": [
+            {
+              "question_number": 1,
+              "question_text": "Clement Greenberg was an essayist and art critic closely associated with the abstract expressionist movement. Among the artists he promoted included a 'golden couple' of Helen Frankenthaler and which artist, her then husband, known for his largely black-and-white series of Elegies to the Spanish Republic?",
+              "answer": "Robert Motherwell",
+              "translations": {
+                "danish": "Luóbótè·Mǎsèwéiěr"
+              },
+              "category": "Art"
+            },
+            {
+              "question_number": 2,
+              "question_text": "Which Greek goddess was the subject of a cult that may have developed from the worship of the Phoenician goddess Astarte? In a Homeric Hymn to this goddess of love and beauty, she seduces the mortal Anchises and becomes the mother to Aeneas. Please answer with the name of the Greek deity not her Roman counterpart.",
+              "answer": "Aphrodite",
+              "translations": {
+                "danish": "Afrodite",
+                "mandarin": "Āfóluòdítè",
+                "polish": "Afrodyta",
+                "romanian": "Afrodita",
+                "norwegian": "Afrodite",
+                "swedish": "Afrodite"
+              },
+              "category": "Mythology"
+            },
+            {
+              "question_number": 3,
+              "question_text": "Blue holes are marine sinkholes that typically appear in limestone bedrock. The most famous example is the Great Blue Hole, which is found along the coast of which country? It is found in this country's namesake barrier reef.",
+              "answer": "Belize",
+              "translations": {
+                "mandarin": "Bólìzī"
+              },
+              "category": "Geography"
+            }
+          ]
+        },
+        {
+          "player_number": 4,
+          "questions": [
+            {
+              "question_number": 1,
+              "question_text": "Some plants, such as many species of legume, have symbiotic relationships with bacteria that contribute to the 'fixation' of which chemical element? That process involves converting the molecular form of this element, which forms about 78% of Earth's atmosphere, into compounds that can be processed by the plant.",
+              "answer": "nitrogen",
+              "translations": {
+                "danish": "kvælstof",
+                "dutch": "stikstof",
+                "norwegian": "kvelstoff",
+                "polish": "azot",
+                "french": "azote",
+                "romanian": "azot",
+                "german": "Stickstoff",
+                "swedish": "kväve",
+                "mandarin": "dàn"
+              },
+              "category": "Science"
+            },
+            {
+              "question_number": 2,
+              "question_text": "Which director made the hour-long completely silent documentary Hotel Monterey while in a short self-imposed exile in New York? Shortly after returning home she made Je Tu Il Elle, one of several films dealing with lesbian identity.",
+              "answer": "Chantal Akerman",
+              "translations": {
+                "mandarin": "Xiāngtèěr·Ākèmàn"
+              },
+              "category": "Film"
+            },
+            {
+              "question_number": 3,
+              "question_text": "The units psi (or pounds per square inch), torr (named after Evangelista Torricelli) and atm (or standard atmosphere) are measures of what physical quantity, the force applied to an area of an object?",
+              "answer": "pressure",
+              "translations": {
+                "danish": "tryk",
+                "dutch": "druk",
+                "norwegian": "trykk",
+                "polish": "ciśnienie",
+                "french": "pression",
+                "german": "Druck",
+                "romanian": "presiune",
+                "swedish": "tryck",
+                "mandarin": "yāqiáng"
+              },
+              "category": "Science"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round_number": 2,
+      "round_name": "Round 2",
+      "players": [
+        {
+          "player_number": 1,
+          "questions": [
+            {
+              "question_number": 1,
+              "question_text": "Orlando Gibbons and Carlo Gesualdo were leading exponents of what form of composition: short secular unaccompanied polyphonic choral music popular from the 15th to 17th centuries? Thomas Weelkes wrote a piece in this genre, As Vesta was from Latmos Hill Descending, in honour of Elizabeth I of England.",
+              "answer": "madrigal",
+              "translations": {
+                "dutch": "madrigaal",
+                "mandarin": "mùgē",
+                "polish": "madrygał"
+              },
+              "category": "Music"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

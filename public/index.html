@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICC Quiz Cards - Interactive Flashcards</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ICC Quiz Cards</h1>
+            <div class="quiz-selector">
+                <label for="quiz-select">Select Quiz:</label>
+                <select id="quiz-select">
+                    <option value="">Loading quizzes...</option>
+                </select>
+            </div>
+        </header>
+
+        <main>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+                <span class="progress-text" id="progress-text">0 / 0</span>
+            </div>
+
+            <div class="card-container" id="card-container">
+                <div class="flashcard" id="flashcard">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-content">
+                                <div class="question-number"></div>
+                                <p class="question-text">Select a quiz to begin</p>
+                            </div>
+                            <div class="card-hint">Click to reveal answer</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-content">
+                                <h3>Answer:</h3>
+                                <p class="answer-text"></p>
+                                <div class="accept-answers"></div>
+                                <div class="translations"></div>
+                            </div>
+                            <div class="card-hint">Click to see question</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="voice-btn" class="voice-btn" title="Read question aloud">
+                    <span class="voice-icon">🔊</span>
+                    <span class="voice-text">Read Aloud</span>
+                </button>
+                <label class="auto-read-toggle">
+                    <input type="checkbox" id="auto-read" />
+                    <span>Auto-read questions</span>
+                </label>
+            </div>
+
+            <div class="navigation">
+                <button id="prev-btn" class="nav-btn" disabled>
+                    <span>←</span> Previous
+                </button>
+                <button id="next-btn" class="nav-btn" disabled>
+                    Next <span>→</span>
+                </button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Round:</span>
+                    <span id="current-round">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Player:</span>
+                    <span id="current-player">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Cards:</span>
+                    <span id="total-cards">0</span>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>ICC Quiz Cards - Interactive Learning Platform</p>
+        </footer>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

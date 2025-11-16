@@ -10,3 +10,11 @@ window.SUPABASE_URL = window.SUPABASE_URL || 'https://wivhfzszyuiisdmbsakm.supab
 window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdmhmenN6eXVpaXNkbWJzYWttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyODI1MTUsImV4cCI6MjA3ODg1ODUxNX0.4htTQ_DLBveDib2xEBzO9wz7EctE-HmYuNDxSPAQ0cs';
 
 // If both are empty, the app will use BroadcastChannel (same-browser only)
+
+// Google Cloud Text-to-Speech Configuration (Optional - enables AI voices)
+// To enable AI voices:
+// 1. Go to https://console.cloud.google.com/apis/credentials
+// 2. Create an API key with Text-to-Speech API enabled
+// 3. Add GOOGLE_CLOUD_TTS_API_KEY to your Vercel environment variables
+// 4. Restart the application
+// The app will automatically enable the "Use AI Voice" toggle when configured

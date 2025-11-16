@@ -50,19 +50,23 @@ class QuizApp {
     selectBestVoice() {
         const voices = this.synthesis.getVoices();
 
-        // Prefer male English voices, prioritizing neutral accents
+        // Prefer Indian English female voices with neutral accents
         const preferredVoices = [
-            // Google voices
-            'Google UK English Male',
-            'Google US English Male',
+            // Google Indian voices
+            'Google हिन्दी',
+            'Google UK English Female',
+            'Google US English Female',
             // Microsoft voices
-            'Microsoft David - English (United States)',
-            'Microsoft George - English (United Kingdom)',
+            'Microsoft Heera - English (India)',
+            'Microsoft Zira - English (United States)',
             // Apple voices
-            'Daniel',
-            'Alex',
-            // Any male English voice
-            voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male')),
+            'Samantha',
+            'Karen',
+            'Veena',
+            // Any Indian English voice
+            voices.find(v => v.lang.includes('en-IN')),
+            // Any female English voice
+            voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female')),
             // Fallback to any English voice
             voices.find(v => v.lang.startsWith('en'))
         ];
@@ -156,7 +160,7 @@ class QuizApp {
         }
 
         // Configure speech parameters
-        this.currentUtterance.rate = 0.9; // Slightly slower for clarity
+        this.currentUtterance.rate = 1.2; // Faster to match text streaming
         this.currentUtterance.pitch = 1.0;
         this.currentUtterance.volume = 1.0;
 
@@ -317,9 +321,9 @@ class QuizApp {
         // Split text into words
         const words = text.split(/\s+/);
 
-        // Average reading speed: ~250 words per minute = ~240ms per word
-        // We'll use a slightly faster pace for better UX: 150ms per word
-        const wordsPerMinute = 400; // Adjust for natural reading speed
+        // Reading speed synced with voice rate 1.2
+        // Normal reading: ~150 wpm, with 1.2x rate = 180 wpm
+        const wordsPerMinute = 200; // Slower to match voice reading
         const delayPerWord = (60 * 1000) / wordsPerMinute;
 
         words.forEach((word, index) => {

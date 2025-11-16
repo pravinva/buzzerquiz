@@ -252,14 +252,25 @@ class MultiplayerQuizApp {
 
     selectBestVoice() {
         const voices = this.synthesis.getVoices();
+
+        // Prefer Indian English female voices with neutral accents
         const preferredVoices = [
-            'Google UK English Male',
-            'Google US English Male',
-            'Microsoft David - English (United States)',
-            'Microsoft George - English (United Kingdom)',
-            'Daniel',
-            'Alex',
-            voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male')),
+            // Google Indian voices
+            'Google हिन्दी',
+            'Google UK English Female',
+            'Google US English Female',
+            // Microsoft voices
+            'Microsoft Heera - English (India)',
+            'Microsoft Zira - English (United States)',
+            // Apple voices
+            'Samantha',
+            'Karen',
+            'Veena',
+            // Any Indian English voice
+            voices.find(v => v.lang.includes('en-IN')),
+            // Any female English voice
+            voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female')),
+            // Fallback to any English voice
             voices.find(v => v.lang.startsWith('en'))
         ];
 
@@ -471,7 +482,9 @@ class MultiplayerQuizApp {
     streamText(element, text) {
         element.innerHTML = '';
         const words = text.split(/\s+/);
-        const wordsPerMinute = 400;
+        // Reading speed synced with voice rate 1.2
+        // Normal reading: ~150 wpm, with 1.2x rate = 180 wpm
+        const wordsPerMinute = 200; // Slower to match voice reading
         const delayPerWord = (60 * 1000) / wordsPerMinute;
 
         this.isStreaming = true;
@@ -682,7 +695,7 @@ class MultiplayerQuizApp {
             this.currentUtterance.voice = this.selectedVoice;
         }
 
-        this.currentUtterance.rate = 0.9;
+        this.currentUtterance.rate = 1.2; // Faster to match text streaming
         this.currentUtterance.pitch = 1.0;
         this.currentUtterance.volume = 1.0;
 

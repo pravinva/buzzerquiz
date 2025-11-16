@@ -485,8 +485,24 @@ class MultiplayerQuizApp {
         }
     }
 
+    normalizeText(text) {
+        // Replace multiple consecutive spaces with single space
+        text = text.replace(/\s{2,}/g, ' ');
+
+        // Fix split words: join single letters that are clearly part of a word
+        // Pattern: word of 3+ chars, space, single consonant/letter (not 'a' or 'I')
+        // This fixes cases like "Taois t" -> "Taoist"
+        text = text.replace(/(\w{3,})\s([bcdefghjklmnopqrstuvwxyz])\b/gi, '$1$2');
+
+        return text.trim();
+    }
+
     streamText(element, text) {
         element.innerHTML = '';
+
+        // Normalize text to fix spacing issues from PDF extraction
+        text = this.normalizeText(text);
+
         const words = text.split(/\s+/);
         // Reading speed synced with voice rate 1.2
         // Normal reading: ~150 wpm, with 1.2x rate = 180 wpm
@@ -694,6 +710,9 @@ class MultiplayerQuizApp {
 
     speak(text) {
         this.stopSpeaking();
+
+        // Normalize text before speaking
+        text = this.normalizeText(text);
 
         this.currentUtterance = new SpeechSynthesisUtterance(text);
 

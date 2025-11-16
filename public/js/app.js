@@ -151,6 +151,9 @@ class QuizApp {
         // Stop any ongoing speech
         this.stopSpeaking();
 
+        // Normalize text before speaking
+        text = this.normalizeText(text);
+
         // Create new utterance
         this.currentUtterance = new SpeechSynthesisUtterance(text);
 
@@ -317,9 +320,24 @@ class QuizApp {
         }
     }
 
+    normalizeText(text) {
+        // Replace multiple consecutive spaces with single space
+        text = text.replace(/\s{2,}/g, ' ');
+
+        // Fix split words: join single letters that are clearly part of a word
+        // Pattern: word of 3+ chars, space, single consonant/letter (not 'a' or 'I')
+        // This fixes cases like "Taois t" -> "Taoist"
+        text = text.replace(/(\w{3,})\s([bcdefghjklmnopqrstuvwxyz])\b/gi, '$1$2');
+
+        return text.trim();
+    }
+
     streamText(element, text) {
         // Clear existing content
         element.innerHTML = '';
+
+        // Normalize text to fix spacing issues from PDF extraction
+        text = this.normalizeText(text);
 
         // Split text into words
         const words = text.split(/\s+/);

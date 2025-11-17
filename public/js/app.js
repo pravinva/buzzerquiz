@@ -694,31 +694,39 @@ class QuizApp {
             
             // Immediately stop ALL CSS animations and show/hide words
             const allWords = this.currentStreamingElement.querySelectorAll('.word');
-            allWords.forEach((wordSpan, index) => {
-                const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || index);
-                
-                // Forcefully cancel all CSS animations
-                wordSpan.style.setProperty('animation', 'none', 'important');
-                wordSpan.style.setProperty('animation-name', 'none', 'important');
-                wordSpan.style.setProperty('animation-delay', '0ms', 'important');
-                wordSpan.style.setProperty('animation-duration', '0ms', 'important');
-                
-                // Remove animation class if it exists
-                wordSpan.classList.remove('word');
-                wordSpan.classList.add('word');
-                
-                // Force reflow to cancel animations immediately
-                void wordSpan.offsetHeight;
-                
-                if (wordIndex < this.currentWordIndex) {
-                    // Words that should already be visible - make them visible immediately
-                    wordSpan.style.setProperty('opacity', '1', 'important');
-                    wordSpan.style.setProperty('display', '', 'important');
-                } else {
-                    // Words that haven't been shown yet - hide them completely
-                    wordSpan.style.setProperty('opacity', '0', 'important');
-                    wordSpan.style.setProperty('display', 'none', 'important');
-                }
+            
+            // Use requestAnimationFrame to ensure immediate update
+            requestAnimationFrame(() => {
+                allWords.forEach((wordSpan, index) => {
+                    const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || index);
+                    
+                    // Completely remove animation by removing the class and re-adding without animation
+                    const originalClass = wordSpan.className;
+                    wordSpan.className = '';
+                    
+                    // Forcefully cancel all CSS animations with !important
+                    wordSpan.style.cssText = `
+                        animation: none !important;
+                        animation-name: none !important;
+                        animation-delay: 0ms !important;
+                        animation-duration: 0ms !important;
+                        transition: none !important;
+                    `;
+                    
+                    // Restore class but without animation
+                    wordSpan.className = originalClass;
+                    
+                    if (wordIndex < this.currentWordIndex) {
+                        // Words that should already be visible - make them visible immediately
+                        wordSpan.style.cssText += 'opacity: 1 !important; display: inline-block !important;';
+                    } else {
+                        // Words that haven't been shown yet - hide them completely
+                        wordSpan.style.cssText += 'opacity: 0 !important; display: none !important;';
+                    }
+                    
+                    // Force reflow
+                    void wordSpan.offsetHeight;
+                });
             });
         }
     }

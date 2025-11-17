@@ -735,29 +735,24 @@ class QuizApp {
             return Promise.resolve();
         }
         
-        // Remove any duplicate words that might have been added
+        // Find the last word index that's currently displayed
         const existingWords = questionText.querySelectorAll('.word');
-        const lastWordIndex = existingWords.length > 0 
-            ? parseInt(existingWords[existingWords.length - 1].getAttribute('data-word-index') || '0')
-            : -1;
+        let lastDisplayedIndex = -1;
         
-        // Only add words that haven't been added yet
-        const actualStartIndex = Math.max(startIndex, lastWordIndex + 1);
+        if (existingWords.length > 0) {
+            existingWords.forEach(wordSpan => {
+                const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || '-1');
+                if (wordIndex > lastDisplayedIndex) {
+                    lastDisplayedIndex = wordIndex;
+                }
+            });
+        }
+        
+        // Start from the next word after the last displayed one
+        const actualStartIndex = Math.max(startIndex, lastDisplayedIndex + 1);
         const wordsToAdd = words.length - actualStartIndex;
         
         if (wordsToAdd > 0) {
-            // Show any hidden words first
-            const allWords = questionText.querySelectorAll('.word');
-            allWords.forEach(wordSpan => {
-                if (wordSpan.style.display === 'none') {
-                    const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || '0');
-                    if (wordIndex < actualStartIndex) {
-                        wordSpan.style.display = '';
-                        wordSpan.style.opacity = '1';
-                    }
-                }
-            });
-            
             // Add remaining words with proper animation delays
             for (let i = actualStartIndex; i < words.length; i++) {
                 const word = words[i];
@@ -766,7 +761,7 @@ class QuizApp {
                 span.textContent = word;
                 span.setAttribute('data-word-index', i);
                 span.style.animationDelay = `${(i - actualStartIndex) * delayPerWord}ms`;
-                span.style.display = '';
+                span.style.opacity = '0'; // Start hidden, animation will show it
                 questionText.appendChild(span);
 
                 // Add space after word (except last word)
@@ -880,8 +875,12 @@ class QuizApp {
     async revealAnswer() {
         if (!this.buzzed) return;
         
+        console.log('Reveal Answer clicked, streamingInterrupted:', this.streamingInterrupted);
+        
         // If streaming was interrupted, continue streaming to completion first
-        if (this.streamingInterrupted) {
+        if (this.streamingInterrupted && this.currentStreamingElement && this.originalQuestionText) {
+            console.log('Continuing streaming from word index:', this.currentWordIndex);
+            
             // Disable reveal button while streaming
             if (this.revealAnswerBtn) {
                 this.revealAnswerBtn.disabled = true;
@@ -894,7 +893,12 @@ class QuizApp {
             }
             
             // Continue streaming and wait for it to complete
-            await this.continueStreaming();
+            try {
+                await this.continueStreaming();
+                console.log('Streaming completed');
+            } catch (error) {
+                console.error('Error continuing streaming:', error);
+            }
             
             // Re-enable reveal button
             if (this.revealAnswerBtn) {
@@ -909,6 +913,7 @@ class QuizApp {
         }
         
         // Now flip card to show answer (force flip even when buzzed)
+        console.log('Flipping card, isFlipped:', this.isFlipped);
         if (!this.isFlipped) {
             this.flipCard(true);
         }

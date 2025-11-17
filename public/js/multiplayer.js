@@ -54,8 +54,8 @@ class MultiplayerQuizApp {
         this.currentUtterance = null;
         this.autoRead = false;
         this.selectedVoice = null;
-        this.voiceSpeed = 1.2;
-        this.wordSpeed = 200;
+        this.voiceSpeed = 1.0;
+        this.wordSpeed = 160;
         this.useAIVoice = false;
         this.selectedAIVoice = 'en-US-Neural2-F';
         this.currentAudio = null;
@@ -477,6 +477,13 @@ class MultiplayerQuizApp {
                         }
                         if (data.voiceSpeed !== undefined) {
                             this.voiceSpeed = data.voiceSpeed;
+                        }
+                        // Sync AI voice settings from controller
+                        if (data.useAIVoice !== undefined) {
+                            this.useAIVoice = data.useAIVoice;
+                        }
+                        if (data.selectedAIVoice !== undefined) {
+                            this.selectedAIVoice = data.selectedAIVoice;
                         }
                         this.speak(data.text, false); // false = don't re-broadcast
                     }
@@ -1719,7 +1726,9 @@ class MultiplayerQuizApp {
                 type: 'play-sound',
                 text: text,
                 wordSpeed: this.wordSpeed,
-                voiceSpeed: this.voiceSpeed
+                voiceSpeed: this.voiceSpeed,
+                useAIVoice: this.useAIVoice,
+                selectedAIVoice: this.selectedAIVoice
             });
         }
 

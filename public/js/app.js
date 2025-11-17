@@ -53,6 +53,7 @@ class QuizApp {
         this.remainingWords = [];
         this.currentWordIndex = 0;
         this.originalQuestionText = '';
+        this.streamingStartTime = null;
 
         this.init();
     }
@@ -635,8 +636,9 @@ class QuizApp {
         this.currentStreamingElement = element;
         this.streamingInterrupted = false;
         
-        // Clear existing content only if starting from beginning
+        // Record start time for streaming
         if (startIndex === 0) {
+            this.streamingStartTime = Date.now();
             element.innerHTML = '';
         }
 
@@ -677,30 +679,13 @@ class QuizApp {
         }
         
         // Mark streaming as interrupted (but don't show remaining words yet)
-        if (this.currentStreamingElement) {
+        if (this.currentStreamingElement && this.streamingStartTime) {
             this.streamingInterrupted = true;
-            // Count how many words have been displayed (check all word spans)
-            const allWords = this.currentStreamingElement.querySelectorAll('.word');
-            // Find the last word that would be visible based on animation delay
-            const now = Date.now();
+            // Calculate how many words should be visible based on elapsed time
+            const elapsedTime = Date.now() - this.streamingStartTime;
             const delayPerWord = (60 * 1000) / this.wordSpeed;
-            let lastVisibleIndex = 0;
-            
-            allWords.forEach((wordSpan, index) => {
-                const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || index);
-                const animationDelay = parseInt(wordSpan.style.animationDelay) || 0;
-                // Estimate if word should be visible (animation started)
-                if (animationDelay < 1000) { // If delay is small, assume it's visible
-                    lastVisibleIndex = Math.max(lastVisibleIndex, wordIndex + 1);
-                }
-            });
-            
-            // Fallback: count all words that exist
-            if (lastVisibleIndex === 0 && allWords.length > 0) {
-                lastVisibleIndex = allWords.length;
-            }
-            
-            this.currentWordIndex = lastVisibleIndex;
+            const wordsDisplayed = Math.floor(elapsedTime / delayPerWord);
+            this.currentWordIndex = Math.min(wordsDisplayed, this.remainingWords.length);
         }
     }
     
@@ -880,6 +865,7 @@ class QuizApp {
         this.remainingWords = [];
         this.currentWordIndex = 0;
         this.originalQuestionText = '';
+        this.streamingStartTime = null;
         
         if (this.buzzBtn) {
             this.buzzBtn.disabled = false;

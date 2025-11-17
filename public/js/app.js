@@ -658,6 +658,7 @@ class QuizApp {
             const span = document.createElement('span');
             span.className = 'word';
             span.textContent = word;
+            span.setAttribute('data-word-index', i);
             span.style.animationDelay = `${(i - startIndex) * delayPerWord}ms`;
             element.appendChild(span);
 
@@ -678,9 +679,28 @@ class QuizApp {
         // Mark streaming as interrupted (but don't show remaining words yet)
         if (this.currentStreamingElement) {
             this.streamingInterrupted = true;
-            // Count how many words are already visible
-            const visibleWords = this.currentStreamingElement.querySelectorAll('.word[style*="opacity: 1"], .word:not([style*="opacity: 0"])');
-            this.currentWordIndex = visibleWords.length;
+            // Count how many words have been displayed (check all word spans)
+            const allWords = this.currentStreamingElement.querySelectorAll('.word');
+            // Find the last word that would be visible based on animation delay
+            const now = Date.now();
+            const delayPerWord = (60 * 1000) / this.wordSpeed;
+            let lastVisibleIndex = 0;
+            
+            allWords.forEach((wordSpan, index) => {
+                const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || index);
+                const animationDelay = parseInt(wordSpan.style.animationDelay) || 0;
+                // Estimate if word should be visible (animation started)
+                if (animationDelay < 1000) { // If delay is small, assume it's visible
+                    lastVisibleIndex = Math.max(lastVisibleIndex, wordIndex + 1);
+                }
+            });
+            
+            // Fallback: count all words that exist
+            if (lastVisibleIndex === 0 && allWords.length > 0) {
+                lastVisibleIndex = allWords.length;
+            }
+            
+            this.currentWordIndex = lastVisibleIndex;
         }
     }
     

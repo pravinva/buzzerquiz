@@ -685,17 +685,21 @@ class QuizApp {
             const wordsDisplayed = Math.floor(elapsedTime / delayPerWord);
             this.currentWordIndex = Math.min(wordsDisplayed, this.remainingWords.length);
             
-            // Immediately show all words up to currentWordIndex (remove animation delays)
+            // Immediately stop all animations and show words up to currentWordIndex
             const allWords = this.currentStreamingElement.querySelectorAll('.word');
             allWords.forEach((wordSpan, index) => {
                 const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || index);
+                // Cancel any ongoing animations
+                wordSpan.style.animation = 'none';
+                wordSpan.style.animationDelay = '0ms';
+                
                 if (wordIndex < this.currentWordIndex) {
                     // Words that should already be visible - make them visible immediately
-                    wordSpan.style.animationDelay = '0ms';
                     wordSpan.style.opacity = '1';
                 } else {
                     // Words that haven't been shown yet - keep them hidden
                     wordSpan.style.opacity = '0';
+                    wordSpan.style.display = 'none';
                 }
             });
         }
@@ -731,6 +735,18 @@ class QuizApp {
         const wordsToAdd = words.length - actualStartIndex;
         
         if (wordsToAdd > 0) {
+            // Show any hidden words first
+            const allWords = questionText.querySelectorAll('.word');
+            allWords.forEach(wordSpan => {
+                if (wordSpan.style.display === 'none') {
+                    const wordIndex = parseInt(wordSpan.getAttribute('data-word-index') || '0');
+                    if (wordIndex < actualStartIndex) {
+                        wordSpan.style.display = '';
+                        wordSpan.style.opacity = '1';
+                    }
+                }
+            });
+            
             // Add remaining words with proper animation delays
             for (let i = actualStartIndex; i < words.length; i++) {
                 const word = words[i];
@@ -739,6 +755,7 @@ class QuizApp {
                 span.textContent = word;
                 span.setAttribute('data-word-index', i);
                 span.style.animationDelay = `${(i - actualStartIndex) * delayPerWord}ms`;
+                span.style.display = '';
                 questionText.appendChild(span);
 
                 // Add space after word (except last word)

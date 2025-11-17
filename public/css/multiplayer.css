@@ -493,6 +493,80 @@ body:has(.game-screen) .container {
 }
 
 /* Connected Players */
+
+/* Pending Players Section */
+.pending-players {
+    background: var(--surface);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #fbbf24; /* Yellow border for attention */
+}
+
+.pending-players h4 {
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pending-players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pending-player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #fff3cd;
+    border-radius: 8px;
+    border: 1px solid #fbbf24;
+}
+
+.pending-player-item span {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.approve-btn {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.approve-btn:hover {
+    background: #059669;
+    transform: scale(1.05);
+}
+
+.reject-btn {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.reject-btn:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
 .connected-players {
     background: var(--surface);
     border-radius: var(--border-radius);

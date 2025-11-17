@@ -10,6 +10,28 @@ class MultiplayerQuizApp {
         this.role = null;
         this.playerName = null;
         this.roomCode = this.getRoomCodeFromURL(); // Only get from URL, don't auto-generate
+        
+        // For controller.html, generate room code immediately if not in URL
+        if (typeof window !== 'undefined' && window.location && window.location.pathname.includes('controller.html') && !this.roomCode) {
+            // Generate room code immediately
+            const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            this.roomCode = newCode;
+            // Update URL
+            if (window.history) {
+                window.history.replaceState({}, '', `?room=${newCode}`);
+            }
+            // Update display after DOM is ready
+            const self = this;
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    self.updateRoomCodeDisplay();
+                });
+            } else {
+                setTimeout(() => {
+                    self.updateRoomCodeDisplay();
+                }, 50);
+            }
+        }
         this.quizStarted = false;
 
         // Multiplayer state
@@ -61,14 +83,34 @@ class MultiplayerQuizApp {
         const urlParams = new URLSearchParams(window.location.search);
         const autoRole = urlParams.get('role');
 
+        // If player is joining with a role, hide role-selection immediately
+        if (autoRole && autoRole.startsWith('player') && this.roomCode) {
+            const roleSelection = document.getElementById('role-selection');
+            if (roleSelection) {
+                roleSelection.style.display = 'none';
+            }
+        }
+
+        // Auto-generate room code for controller if on controller.html and no room code exists
+        if (window.location.pathname.includes('controller.html') && !this.roomCode && !autoRole) {
+            // Generate immediately - don't wait for role selection
+            // Use setTimeout to ensure DOM is ready
+            setTimeout(() => {
+                this.generateRoomForController();
+                // Don't auto-select role - let user click "Start as Controller" button
+            }, 100);
+        }
+
         // Only initialize backend if we have a room code (i.e., player joining existing room)
         if (this.roomCode) {
             await this.initializeBackend();
 
-            // Auto-select role if specified
+            // Auto-select role if specified (only for players, not controller)
             if (autoRole && autoRole.startsWith('player')) {
                 this.selectRole(autoRole);
             }
+            // Note: Controller role should be selected manually by clicking "Start as Controller" button
+            // Don't auto-select controller - let user click the button
         }
 
         await this.loadQuizList();
@@ -78,9 +120,14 @@ class MultiplayerQuizApp {
     setupRoomManagement() {
         const generateRoomBtn = document.getElementById('generate-room-btn');
         const copyBtn = document.getElementById('copy-room-code-btn');
+        const newRoomBtn = document.getElementById('new-room-btn');
 
         if (generateRoomBtn) {
             generateRoomBtn.addEventListener('click', () => this.generateRoomForController());
+        }
+
+        if (newRoomBtn) {
+            newRoomBtn.addEventListener('click', () => this.generateRoomForController());
         }
 
         if (copyBtn) {
@@ -106,6 +153,29 @@ class MultiplayerQuizApp {
         });
     }
 
+    updateRoomCodeDisplay() {
+        // Update room code display element
+        const updateDisplay = () => {
+            const roomCodeEl = document.getElementById('room-code');
+            if (roomCodeEl && this.roomCode) {
+                roomCodeEl.textContent = this.roomCode;
+                console.log('Room code display updated to:', this.roomCode);
+                return true;
+            }
+            return false;
+        };
+
+        // Try immediately
+        if (!updateDisplay()) {
+            // Retry after DOM is ready
+            setTimeout(() => {
+                if (!updateDisplay()) {
+                    setTimeout(() => updateDisplay(), 300);
+                }
+            }, 100);
+        }
+    }
+
     generateRoomForController() {
         // Generate new room code
         const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -114,11 +184,8 @@ class MultiplayerQuizApp {
         // Update URL
         window.history.replaceState({}, '', `?room=${newCode}`);
 
-        // Display room code
-        const roomCodeEl = document.getElementById('room-code');
-        if (roomCodeEl) {
-            roomCodeEl.textContent = this.roomCode;
-        }
+        // Display room code using dedicated function
+        this.updateRoomCodeDisplay();
 
         // Generate and display player link (root URL is the player join page)
         const playerLink = window.location.origin;
@@ -2056,5 +2123,13 @@ class MultiplayerQuizApp {
     }
 }
 
-// Initialize app
-const app = new MultiplayerQuizApp();
+// Initialize app when DOM is ready
+let app;
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        app = new MultiplayerQuizApp();
+    });
+} else {
+    // DOM is already ready
+    app = new MultiplayerQuizApp();
+}

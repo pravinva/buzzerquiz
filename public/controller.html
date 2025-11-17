@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="theme-color" content="#6366f1">
     <meta name="description" content="ICC Quiz Cards - Controller Mode">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -86,6 +89,14 @@
                                     maxlength="20"
                                 />
                                 <button id="name-save-btn" class="name-save-btn">Save</button>
+                            </div>
+                        </div>
+
+                        <!-- Pending Players (Controller Only) -->
+                        <div class="pending-players controller-only" id="pending-players-section" style="display: none;">
+                            <h4>🔔 Pending Players</h4>
+                            <div id="pending-players-list" class="pending-players-list">
+                                <!-- Will be populated dynamically -->
                             </div>
                         </div>
 
@@ -359,11 +370,26 @@
             }, 100);
         });
 
+
+        // Unregister service worker for fresh updates (development)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                    console.log('Service worker unregistered');
+                }
+            });
+        }
+        
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                    .then(registration => console.log('SW registered:', registration))
+                    .then(registration => {
+                        console.log('SW registered:', registration);
+                        // Force update
+                        registration.update();
+                    })
                     .catch(error => console.log('SW registration failed:', error));
             });
         }

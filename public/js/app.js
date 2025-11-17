@@ -855,6 +855,11 @@ class QuizApp {
     resetBuzzState() {
         this.buzzed = false;
         this.isFlipped = false;
+        this.streamingInterrupted = false;
+        this.currentStreamingElement = null;
+        this.remainingWords = [];
+        this.currentWordIndex = 0;
+        this.originalQuestionText = '';
         
         if (this.buzzBtn) {
             this.buzzBtn.disabled = false;
@@ -868,6 +873,11 @@ class QuizApp {
         
         if (this.revealAnswerBtn) {
             this.revealAnswerBtn.style.display = 'none';
+            this.revealAnswerBtn.disabled = false;
+            const revealText = this.revealAnswerBtn.querySelector('.reveal-text');
+            if (revealText) {
+                revealText.textContent = 'Reveal Answer';
+            }
         }
         
         if (this.flashcard) {

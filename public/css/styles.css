@@ -604,6 +604,13 @@ header h1 {
     box-shadow: none;
 }
 
+.start-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+    width: 100%;
+}
+
 .start-quiz-btn {
     padding: 16px 40px;
     font-size: 1.1rem;
@@ -634,59 +641,73 @@ header h1 {
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    margin: 20px 0 30px 0;
-}
-
-.buzz-btn {
-    padding: 20px 50px;
-    font-size: 1.3rem;
-    font-weight: 700;
-    border: none;
-    border-radius: 16px;
-    cursor: pointer;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-    min-width: 200px;
+    margin: 30px 0;
     width: 100%;
 }
 
+.buzz-btn {
+    padding: 30px 60px;
+    font-size: 2rem;
+    font-weight: 700;
+    border: 4px solid var(--secondary-color);
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--secondary-color), #be185d);
+    color: white;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 40px rgba(236, 72, 153, 0.5);
+    min-width: 200px;
+    min-height: 200px;
+    justify-content: center;
+}
+
 .buzz-btn:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+    transform: scale(1.1);
+    box-shadow: 0 15px 50px rgba(236, 72, 153, 0.7);
 }
 
 .buzz-btn:active:not(:disabled) {
-    transform: translateY(0);
+    transform: scale(1.05);
 }
 
 .buzz-btn:disabled {
-    background: var(--surface-light);
-    cursor: not-allowed;
     opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--surface-light);
+    border-color: var(--surface-light);
     box-shadow: none;
 }
 
 .buzz-btn.buzzed {
-    background: linear-gradient(135deg, #059669, #047857);
-    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+    background: var(--success);
+    border-color: var(--success);
+    animation: buzzSuccess 0.5s ease-in-out;
+}
+
+@keyframes buzzSuccess {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .buzz-icon {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     display: inline-block;
     line-height: 1;
 }
 
 .buzz-text {
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     display: inline-block;
+    font-size: 2rem;
 }
 
 .reveal-answer-btn {

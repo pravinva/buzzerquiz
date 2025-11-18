@@ -891,16 +891,43 @@ class QuizApp {
 
         // Request microphone permission first (required for some browsers)
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            // Stop the stream immediately - we just needed permission
-            stream.getTracks().forEach(track => track.stop());
-            console.log('Microphone permission granted');
+            console.log('Requesting microphone permission...');
+            if (this.buzzIndicator) {
+                this.buzzIndicator.innerHTML = 'Requesting microphone access... 🎤';
+            }
+            
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                } 
+            });
+            
+            console.log('Microphone permission granted, stream:', stream);
+            
+            // Keep the stream active while listening (don't stop it immediately)
+            // Store it so we can stop it later
+            this.microphoneStream = stream;
+            
+            // Update UI to show mic is active
+            if (this.buzzIndicator) {
+                this.buzzIndicator.innerHTML = 'Microphone active! Listening for answer... 🎤 Speak now!';
+            }
         } catch (error) {
             console.error('Microphone permission denied:', error);
-            if (this.buzzIndicator) {
-                this.buzzIndicator.innerHTML = 'Microphone access required. Please allow microphone access and try again.';
-            }
             this.isListening = false;
+            if (this.buzzIndicator) {
+                let errorMsg = 'Microphone access required. ';
+                if (error.name === 'NotAllowedError') {
+                    errorMsg += 'Please allow microphone access in your browser settings and try again.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMsg += 'No microphone found. Please connect a microphone.';
+                } else {
+                    errorMsg += `Error: ${error.message}`;
+                }
+                this.buzzIndicator.innerHTML = errorMsg;
+            }
             return;
         }
 
@@ -1227,7 +1254,7 @@ class QuizApp {
         }
         
         if (this.buzzIndicator) {
-            this.buzzIndicator.textContent = 'You buzzed!';
+            this.buzzIndicator.textContent = 'Requesting microphone access...';
             this.buzzIndicator.classList.add('buzzed');
         }
         
@@ -1236,8 +1263,13 @@ class QuizApp {
             this.revealAnswerBtn.style.display = 'block';
         }
 
-        // Start listening for answer (speech recognition)
-        this.startListeningForAnswer();
+        // Start listening for answer (speech recognition) - await the async call
+        this.startListeningForAnswer().catch(error => {
+            console.error('Error in startListeningForAnswer:', error);
+            if (this.buzzIndicator) {
+                this.buzzIndicator.innerHTML = 'Error starting microphone. Please check browser permissions.';
+            }
+        });
     }
     
     async revealAnswer() {

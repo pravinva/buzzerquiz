@@ -74,12 +74,22 @@ class MultiplayerQuizApp {
         this.isMicrophoneActive = false;
         this.audioElements = new Map(); // Map of audio elements for remote streams
 
+        // Speech Recognition for auto-answering
+        this.recognition = null;
+        this.isListening = false;
+        this.recognitionTimeout = null;
+
         this.init();
     }
 
     async init() {
         // Setup room management buttons
         this.setupRoomManagement();
+
+        // Initialize speech recognition (controller only)
+        if (this.role === 'controller' || window.location.pathname.includes('controller.html')) {
+            this.initializeSpeechRecognition();
+        }
 
         // Check for auto-role selection from URL (from play.html)
         const urlParams = new URLSearchParams(window.location.search);
@@ -1231,6 +1241,11 @@ class MultiplayerQuizApp {
             buzzed: true,
             startVoiceAnswer: true
         });
+
+        // Start listening for answer (controller only)
+        if (this.role === 'controller') {
+            this.startListeningForAnswer();
+        }
     }
 
     handleBuzzResult(data) {
@@ -1269,6 +1284,9 @@ class MultiplayerQuizApp {
 
         // Stop voice answer
         this.stopVoiceAnswer();
+
+        // Stop listening for answer
+        this.stopListeningForAnswer();
 
         // Reset UI
         const buzzIndicator = document.getElementById('buzz-indicator');

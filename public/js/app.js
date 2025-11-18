@@ -986,6 +986,15 @@ class QuizApp {
             this.isListening = false;
         }
 
+        // Stop microphone stream
+        if (this.microphoneStream) {
+            this.microphoneStream.getTracks().forEach(track => {
+                track.stop();
+                console.log('Microphone track stopped');
+            });
+            this.microphoneStream = null;
+        }
+
         if (this.recognitionTimeout) {
             clearTimeout(this.recognitionTimeout);
             this.recognitionTimeout = null;

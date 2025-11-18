@@ -62,6 +62,7 @@ class QuizApp {
         this.pendingAnswer = null; // Store recognized answer waiting for confirmation
         this.confirmationAttempted = false; // Track if we've asked for confirmation once
         this.score = 0; // Solo play score
+        this.microphoneStream = null; // Store microphone stream
 
         this.init();
     }

@@ -733,7 +733,14 @@ class QuizApp {
         
         const questionText = this.currentStreamingElement;
         const startIndex = this.currentWordIndex;
-        const words = this.remainingWords;
+        
+        // Ensure remainingWords is valid - reconstruct from originalQuestionText if needed
+        let words = this.remainingWords;
+        if (!words || words.length === 0) {
+            words = this.originalQuestionText.split(/\s+/);
+            this.remainingWords = words;
+        }
+        
         const delayPerWord = (60 * 1000) / this.wordSpeed;
         
         // Calculate total time needed to finish streaming
@@ -1288,37 +1295,51 @@ class QuizApp {
         console.log('Reveal Answer clicked, streamingInterrupted:', this.streamingInterrupted);
         
         // If streaming was interrupted, continue streaming to completion first
-        if (this.streamingInterrupted && this.currentStreamingElement && this.originalQuestionText) {
-            console.log('Continuing streaming from word index:', this.currentWordIndex);
-            
-            // Disable reveal button while streaming
-            if (this.revealAnswerBtn) {
-                this.revealAnswerBtn.disabled = true;
-                const revealText = this.revealAnswerBtn.querySelector('.reveal-text');
-                if (revealText) {
-                    revealText.textContent = 'Streaming question...';
-                } else {
-                    this.revealAnswerBtn.textContent = 'Streaming question...';
+        if (this.streamingInterrupted && this.originalQuestionText) {
+            // Re-query the question text element to ensure it's still valid
+            const questionTextElement = document.querySelector('.question-text');
+            if (questionTextElement) {
+                // Update the reference in case it changed
+                this.currentStreamingElement = questionTextElement;
+                
+                console.log('Continuing streaming from word index:', this.currentWordIndex);
+                
+                // Disable reveal button while streaming
+                if (this.revealAnswerBtn) {
+                    this.revealAnswerBtn.disabled = true;
+                    const revealText = this.revealAnswerBtn.querySelector('.reveal-text');
+                    if (revealText) {
+                        revealText.textContent = 'Streaming question...';
+                    } else {
+                        this.revealAnswerBtn.textContent = 'Streaming question...';
+                    }
                 }
-            }
-            
-            // Continue streaming and wait for it to complete
-            try {
-                await this.continueStreaming();
-                console.log('Streaming completed');
-            } catch (error) {
-                console.error('Error continuing streaming:', error);
-            }
-            
-            // Re-enable reveal button
-            if (this.revealAnswerBtn) {
-                this.revealAnswerBtn.disabled = false;
-                const revealText = this.revealAnswerBtn.querySelector('.reveal-text');
-                if (revealText) {
-                    revealText.textContent = 'Reveal Answer';
-                } else {
-                    this.revealAnswerBtn.textContent = '👁️ Reveal Answer';
+                
+                // Ensure card is not flipped while streaming (so question is visible)
+                if (this.isFlipped) {
+                    this.flipCard(true); // Flip back to question side
                 }
+                
+                // Continue streaming and wait for it to complete
+                try {
+                    await this.continueStreaming();
+                    console.log('Streaming completed');
+                } catch (error) {
+                    console.error('Error continuing streaming:', error);
+                }
+                
+                // Re-enable reveal button
+                if (this.revealAnswerBtn) {
+                    this.revealAnswerBtn.disabled = false;
+                    const revealText = this.revealAnswerBtn.querySelector('.reveal-text');
+                    if (revealText) {
+                        revealText.textContent = 'Reveal Answer';
+                    } else {
+                        this.revealAnswerBtn.textContent = '👁️ Reveal Answer';
+                    }
+                }
+            } else {
+                console.warn('Question text element not found, cannot continue streaming');
             }
         }
         
